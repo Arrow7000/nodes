@@ -17,7 +17,7 @@ let nodes: Node[] = [];
 const getCanvasEnd = () => new Vector(ctx.canvas.width, ctx.canvas.height);
 let canvasArea = 0;
 
-function cullOutSideNodes() {
+function cullOutsideNodes() {
   nodes = nodes.filter(
     node =>
       getRectanglePosition(node.position, [Vector.origin, getCanvasEnd()]) ===
@@ -38,7 +38,7 @@ function sizeCanvasToWindow() {
 
   // canvasArea = getCanvasEnd().area;
 
-  cullOutSideNodes();
+  cullOutsideNodes();
 }
 
 sizeCanvasToWindow();
@@ -80,12 +80,12 @@ canvas.addEventListener("contextmenu", e => {
 });
 
 function removeExcessNodes() {
-  const nodesPerArea =
-    (canvasArea / (Math.PI * (connectedLength / 2) ** 2)) * 1.5; //
-  const excessNodes = nodes.length - nodesPerArea;
+  const allowedNodesCount =
+    (canvasArea / (Math.PI * (connectedLength / 2) ** 2)) * 3;
+  const excessNodes = nodes.length - allowedNodesCount;
 
   if (excessNodes > 0) {
-    nodes = nodes.slice(1, nodes.length);
+    nodes = nodes.slice(1, nodes.length); // delete the first ones first, FIFO
   }
 }
 
@@ -95,7 +95,7 @@ function onFrame(counter: number) {
   if (counter % 60 === 0) {
     // only clear every second
     removeExcessNodes();
-    cullOutSideNodes();
+    cullOutsideNodes();
   }
 
   const edges = allCombinations(nodes, (a, b) => {
