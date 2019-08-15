@@ -1,30 +1,47 @@
-import { Vector, Rectangle } from "./Vector";
+import { Vector, Rectangle, getRectanglePosition, Pos } from "./Vector";
 import { Node } from "./Node";
 import { Edge, getRepulsion } from "./Edge";
 import { drawLine, Ctx, drawCircle } from "./drawing";
 import { allCombinations, notNull } from "./helpers";
 
+const { max } = Math;
+
 // Constants
-const connectedLength = 100;
-const friction = 0.01;
+const connectedLength = 250;
+const friction = 0.002;
 
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
-const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+const ctx = canvas.getContext("2d") as Ctx;
+
+let nodes: Node[] = [];
+const getCanvasEnd = () => new Vector(ctx.canvas.width, ctx.canvas.height);
+let canvasArea = 0;
+
+function cullOutSideNodes() {
+  nodes = nodes.filter(
+    node =>
+      getRectanglePosition(node.position, [Vector.origin, getCanvasEnd()]) ===
+      Pos.Inside
+  );
+}
 
 function sizeCanvasToWindow() {
   const width = window.innerWidth;
   const height = window.innerHeight;
   ctx.canvas.width = width;
   ctx.canvas.height = height;
+
+  canvasArea = new Vector(
+    max(connectedLength, width),
+    max(connectedLength, height)
+  ).area;
+
+  // canvasArea = getCanvasEnd().area;
+
+  cullOutSideNodes();
 }
 
-ctx.canvas.width = window.innerWidth;
-ctx.canvas.height = window.innerHeight;
-
-const getCanvasRect = (): Rectangle => [
-  new Vector(0, 0),
-  new Vector(ctx.canvas.width, ctx.canvas.height)
-];
+sizeCanvasToWindow();
 
 ctx.imageSmoothingEnabled = true;
 
@@ -33,9 +50,9 @@ const range = <T>(length: number, mapper: (i: number) => T) =>
 
 const rand = (max: number) => Math.random() * max;
 const makeVector = () =>
-  new Vector(rand(ctx.canvas.width), rand(ctx.canvas.height));
+  new Vector(rand(getCanvasEnd().x), rand(getCanvasEnd().y));
 
-let nodes: Node[] = range(10, () => new Node(makeVector()));
+nodes = range(10, () => new Node(makeVector()));
 
 window.onresize = sizeCanvasToWindow;
 
@@ -62,8 +79,24 @@ canvas.addEventListener("contextmenu", e => {
   nodes = nodes.filter(node => !localNodes.includes(node));
 });
 
-function onFrame() {
+function removeExcessNodes() {
+  const nodesPerArea =
+    (canvasArea / (Math.PI * (connectedLength / 2) ** 2)) * 1.5; //
+  const excessNodes = nodes.length - nodesPerArea;
+
+  if (excessNodes > 0) {
+    nodes = nodes.slice(0, nodes.length - 1);
+  }
+}
+
+function onFrame(counter: number) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  if (counter % 60 === 0) {
+    // only clear every second
+    removeExcessNodes();
+    cullOutSideNodes();
+  }
 
   const edges = allCombinations(nodes, (a, b) => {
     const distance = a.position.distanceTo(b.position);
@@ -82,13 +115,13 @@ function onFrame() {
   nodes.forEach(node => {
     drawCircle(ctx, node.position);
 
-    node.wallBounce(getCanvasRect());
+    node.wallBounce([Vector.origin, getCanvasEnd()]);
     node.proportionalFriction(friction);
     node.momentumMove();
   });
 
-  requestAnimationFrame(onFrame);
+  requestAnimationFrame(() => onFrame(counter + 1));
 }
 
-sizeCanvasToWindow();
-onFrame();
+// Start it off
+onFrame(0);

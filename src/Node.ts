@@ -34,13 +34,14 @@ export class Node {
 
   wallBounce(rect: Rectangle) {
     const pos = getRectanglePosition(this.position, rect);
+    const bounceLoss = 0.25;
 
     switch (pos) {
       case Pos.TopLeft:
       case Pos.TopRight:
       case Pos.Top:
         if (this.momentum.y < 0) {
-          this.momentum = this.momentum.flipY();
+          this.momentum = this.momentum.flipY().scaleY(1 - bounceLoss);
         }
         break;
 
@@ -48,19 +49,19 @@ export class Node {
       case Pos.Bottom:
       case Pos.BottomRight:
         if (this.momentum.y > 0) {
-          this.momentum = this.momentum.flipY();
+          this.momentum = this.momentum.flipY().scaleY(1 - bounceLoss);
         }
         break;
 
       case Pos.Left:
         if (this.momentum.x < 0) {
-          this.momentum = this.momentum.flipX();
+          this.momentum = this.momentum.flipX().scaleX(1 - bounceLoss);
         }
         break;
 
       case Pos.Right:
         if (this.momentum.x > 0) {
-          this.momentum = this.momentum.flipX();
+          this.momentum = this.momentum.flipX().scaleX(1 - bounceLoss);
         }
         break;
     }

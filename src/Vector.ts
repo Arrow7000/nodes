@@ -18,8 +18,7 @@ export class Vector {
   }
 
   public subtractLen(subtractor: number) {
-    const currLen = this.length;
-    return this.scaleTo(currLen - subtractor);
+    return this.scaleTo(this.length - subtractor);
   }
 
   public multiply(factor: number) {
@@ -58,6 +57,16 @@ export class Vector {
     return new Vector(x, -y);
   }
 
+  public scaleX(scalar: number) {
+    const { x, y } = this;
+    return new Vector(x * scalar, y);
+  }
+
+  public scaleY(scalar: number) {
+    const { x, y } = this;
+    return new Vector(x, y * scalar);
+  }
+
   public reverse() {
     return this.multiply(-1);
   }
@@ -71,6 +80,11 @@ export class Vector {
     const { x, y } = this;
 
     return sqrt(x ** 2 + y ** 2);
+  }
+
+  get area() {
+    const { x, y } = this;
+    return x * y;
   }
 }
 

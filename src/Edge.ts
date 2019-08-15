@@ -34,9 +34,7 @@ function forceAwayFrom(
 ): Vector {
   const oppositeVector = forceSource.to(subject);
 
-  return oppositeVector
-    .multiply(forceLimit / oppositeVector.length)
-    .divide(100);
+  return oppositeVector.multiply(1 / oppositeVector.length).divide(50);
 }
 
 export function getRepulsion(
