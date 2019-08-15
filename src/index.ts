@@ -73,7 +73,7 @@ canvas.addEventListener("contextmenu", e => {
 
   const location = new Vector(e.clientX, e.clientY);
   const localNodes = nodes.filter(
-    node => node.position.distanceTo(location) < connectedLength * 2
+    node => node.position.distanceTo(location) < connectedLength
   );
 
   nodes = nodes.filter(node => !localNodes.includes(node));
