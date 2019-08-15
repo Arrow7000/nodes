@@ -85,7 +85,7 @@ function removeExcessNodes() {
   const excessNodes = nodes.length - nodesPerArea;
 
   if (excessNodes > 0) {
-    nodes = nodes.slice(0, nodes.length - 1);
+    nodes = nodes.slice(1, nodes.length);
   }
 }
 
