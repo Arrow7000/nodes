@@ -52,7 +52,7 @@ const rand = (max: number) => Math.random() * max;
 const makeVector = () =>
   new Vector(rand(getCanvasEnd().x), rand(getCanvasEnd().y));
 
-nodes = range(10, () => new Node(makeVector()));
+nodes = range(30, () => new Node(makeVector()));
 
 window.onresize = sizeCanvasToWindow;
 
