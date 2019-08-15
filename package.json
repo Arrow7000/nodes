@@ -1,0 +1,16 @@
+{
+  "name": "nodes",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "parcel src/index.pug --open",
+    "build": "parcel build src/index.pug"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.12.3",
+    "pug": "^2.0.4",
+    "sass": "^1.22.9",
+    "typescript": "^3.5.3"
+  }
+}
