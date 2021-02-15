@@ -19,7 +19,7 @@ let canvasArea = 0;
 
 function cullOutsideNodes() {
   nodes = nodes.filter(
-    node =>
+    (node) =>
       getRectanglePosition(node.position, [Vector.origin, getCanvasEnd()]) ===
       Pos.Inside
   );
@@ -56,32 +56,32 @@ nodes = range(30, () => new Node(makeVector()));
 
 window.onresize = sizeCanvasToWindow;
 
-canvas.addEventListener("click", e => {
+canvas.addEventListener("click", (e) => {
   const wiggle = 20;
   const wiggleRoom = () => Math.random() * wiggle - wiggle / 2;
 
   const location = new Vector(e.clientX, e.clientY);
-  if (nodes.filter(n => n.position.isEqual(location)).length < 1) {
+  if (nodes.filter((n) => n.position.isEqual(location)).length < 1) {
     const newLoc = location.add(new Vector(wiggleRoom(), wiggleRoom()));
 
     nodes.push(new Node(newLoc));
   }
 });
 
-canvas.addEventListener("contextmenu", e => {
+canvas.addEventListener("contextmenu", (e) => {
   e.preventDefault();
 
   const location = new Vector(e.clientX, e.clientY);
   const localNodes = nodes.filter(
-    node => node.position.distanceTo(location) < connectedLength
+    (node) => node.position.distanceTo(location) < connectedLength
   );
 
-  nodes = nodes.filter(node => !localNodes.includes(node));
+  nodes = nodes.filter((node) => !localNodes.includes(node));
 });
 
 function removeExcessNodes() {
   const allowedNodesCount =
-    (canvasArea / (Math.PI * (connectedLength / 2) ** 2)) * 3;
+    (canvasArea / (Math.PI * (connectedLength / 2) ** 2)) * 10;
   const excessNodes = nodes.length - allowedNodesCount;
 
   if (excessNodes > 0) {
@@ -112,7 +112,7 @@ function onFrame(counter: number) {
     drawLine(ctx, a.position, b.position);
   });
 
-  nodes.forEach(node => {
+  nodes.forEach((node) => {
     drawCircle(ctx, node.position);
 
     node.wallBounce([Vector.origin, getCanvasEnd()]);
